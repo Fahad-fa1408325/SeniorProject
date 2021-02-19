@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>MainMenuFragment.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #629755; font-weight: bold; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainMenuFragment.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.cmps312.seniorproject</span>
+
+<span class="s1">import android.os.Bundle</span>
+<span class="s1">import androidx.fragment.app.Fragment</span>
+<span class="s1">import android.view.LayoutInflater</span>
+<span class="s1">import android.view.View</span>
+<span class="s1">import android.view.ViewGroup</span>
+
+<span class="s2">// TODO: Rename parameter arguments, choose names that match</span>
+<span class="s2">// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER</span>
+<span class="s1">private const </span><span class="s0">val </span><span class="s1">ARG_PARAM1 = </span><span class="s3">&quot;param1&quot;</span>
+<span class="s1">private const </span><span class="s0">val </span><span class="s1">ARG_PARAM2 = </span><span class="s3">&quot;param2&quot;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* A simple [Fragment] subclass.</span>
+ <span class="s4">* Use the [MainMenuFragment.newInstance] factory method to</span>
+ <span class="s4">* create an instance of this fragment.</span>
+ <span class="s4">*/</span>
+<span class="s0">class </span><span class="s1">MainMenuFragment : Fragment() {</span>
+    <span class="s2">// TODO: Rename and change types of parameters</span>
+    <span class="s1">private </span><span class="s0">var </span><span class="s1">param1: String? = </span><span class="s0">null</span>
+    <span class="s1">private </span><span class="s0">var </span><span class="s1">param2: String? = </span><span class="s0">null</span>
+
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onCreate(savedInstanceState: Bundle?) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span>
+        <span class="s1">arguments?.let {</span>
+            <span class="s1">param1 = it.getString(ARG_PARAM1)</span>
+            <span class="s1">param2 = it.getString(ARG_PARAM2)</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onCreateView(</span>
+        <span class="s1">inflater: LayoutInflater</span><span class="s0">, </span><span class="s1">container: ViewGroup?</span><span class="s0">,</span>
+        <span class="s1">savedInstanceState: Bundle?</span>
+    <span class="s1">): View? {</span>
+        <span class="s2">// Inflate the layout for this fragment</span>
+        <span class="s0">return </span><span class="s1">inflater.inflate(R.layout.fragment_main_menu</span><span class="s0">, </span><span class="s1">container</span><span class="s0">, false</span><span class="s1">)</span>
+    <span class="s1">}</span>
+
+    <span class="s1">companion </span><span class="s0">object </span><span class="s1">{</span>
+        <span class="s4">/**</span>
+         <span class="s4">* Use this factory method to create a new instance of</span>
+         <span class="s4">* this fragment using the provided parameters.</span>
+         <span class="s4">*</span>
+         <span class="s4">* </span><span class="s5">@param </span><span class="s4">param1 Parameter 1.</span>
+         <span class="s4">* </span><span class="s5">@param </span><span class="s4">param2 Parameter 2.</span>
+         <span class="s4">* </span><span class="s5">@return </span><span class="s4">A new instance of fragment MainMenuFragment.</span>
+         <span class="s4">*/</span>
+        <span class="s2">// TODO: Rename and change types and number of parameters</span>
+        <span class="s1">@JvmStatic</span>
+        <span class="s0">fun </span><span class="s1">newInstance(param1: String</span><span class="s0">, </span><span class="s1">param2: String) =</span>
+            <span class="s1">MainMenuFragment().apply {</span>
+                <span class="s1">arguments = Bundle().apply {</span>
+                    <span class="s1">putString(ARG_PARAM1</span><span class="s0">, </span><span class="s1">param1)</span>
+                    <span class="s1">putString(ARG_PARAM2</span><span class="s0">, </span><span class="s1">param2)</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

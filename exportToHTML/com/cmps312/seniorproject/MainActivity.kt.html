@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>MainActivity.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.cmps312.seniorproject</span>
+
+<span class="s1">import android.os.Bundle</span>
+<span class="s1">import androidx.appcompat.app.AppCompatActivity</span>
+<span class="s1">import androidx.navigation.NavController</span>
+<span class="s1">import androidx.navigation.findNavController</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignIn</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignInClient</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignInOptions</span>
+<span class="s1">import com.google.firebase.auth.FirebaseAuth</span>
+
+
+<span class="s0">class </span><span class="s1">MainActivity : AppCompatActivity() {</span>
+    <span class="s1">lateinit </span><span class="s0">var </span><span class="s1">auth : FirebaseAuth</span>
+    <span class="s1">lateinit </span><span class="s0">var </span><span class="s1">googleSignInClient : GoogleSignInClient</span>
+    <span class="s1">lateinit </span><span class="s0">var </span><span class="s1">googleSignInOption : GoogleSignInOptions</span>
+    <span class="s1">private lateinit </span><span class="s0">var </span><span class="s1">navController: NavController</span>
+
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onCreate(savedInstanceState: Bundle?) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span>
+        <span class="s1">setContentView(R.layout.activity_main)</span>
+
+        <span class="s1">navController = findNavController(R.id.fragment)</span>
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">google(){</span>
+        <span class="s2">// Configure Google Sign In</span>
+
+        <span class="s0">val </span><span class="s1">gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)</span>
+            <span class="s1">.requestIdToken(getString(R.string.default_web_client_id))</span>
+            <span class="s1">.requestEmail()</span>
+            <span class="s1">.build()</span>
+        <span class="s1">googleSignInClient = GoogleSignIn.getClient(</span><span class="s0">this,</span><span class="s1">gso)</span>
+        <span class="s1">auth = FirebaseAuth.getInstance()</span>
+    <span class="s1">}</span>
+
+
+
+<span class="s1">}</span>
+
+
+<span class="s2">/*Firebase.auth.addAuthStateListener { 
+    if (it.currentUser?.uid == null) { 
+        showSignIn() 
+    } else { 
+        val displayName = it.currentUser!!.displayName ?: &quot;Unknown&quot; 
+        Toast.makeText(this, &quot;Welcome Mr $displayName&quot;, Toast.LENGTH_SHORT).show() 
+    } 
+} 
+}*/</span>
+
+<span class="s2">/* fun showSignIn() { 
+     val providers = listOf( 
+         AuthUI.IdpConfig.EmailBuilder().build(), 
+         AuthUI.IdpConfig.GoogleBuilder().build() 
+     ) 
+ 
+     val intent = AuthUI.getInstance() 
+         .createSignInIntentBuilder() 
+         .setAvailableProviders(providers) 
+         .setLogo(R.mipmap.ic_launcher) 
+         .setIsSmartLockEnabled(false) 
+         .build() 
+     startActivityForResult(intent, SIGN_IN_CODE) 
+ } 
+ 
+ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { 
+     super.onActivityResult(requestCode, resultCode, data) 
+     val response = IdpResponse.fromResultIntent(data) 
+     if (requestCode == SIGN_IN_CODE) { 
+         if (resultCode == Activity.RESULT_OK) { 
+ 
+         } else { 
+             Toast.makeText(this, response?.error?.message, Toast.LENGTH_SHORT).show() 
+             showSignIn() 
+         } 
+     } 
+ } 
+ 
+}*/</span></pre>
+</body>
+</html>

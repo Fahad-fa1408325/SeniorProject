@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.cmps312.seniorproject.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment2"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.cmps312.seniorproject.RegisterFragment"
+        android:label="fragment_register2"
+        tools:layout="@layout/fragment_register2" >
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NFCFragment"
+        android:name="com.cmps312.seniorproject.NFCFragment"
+        android:label="fragment_n_f_c"
+        tools:layout="@layout/fragment_n_f_c" />
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.cmps312.seniorproject.DashboardFragment"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_NFCFragment"
+            app:destination="@id/NFCFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_statFragment"
+            app:destination="@id/statFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_dispenseOnDemandFragment"
+            app:destination="@id/dispenseOnDemandFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_addGuestUserFragment"
+            app:destination="@id/addGuestUserFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statFragment"
+        android:name="com.cmps312.seniorproject.StatFragment"
+        android:label="fragment_stat"
+        tools:layout="@layout/fragment_stat" />
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.cmps312.seniorproject.ScheduleFragment"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" >
+        <action
+            android:id="@+id/action_scheduleFragment_to_addScheduleFragment"
+            app:destination="@id/addScheduleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dispenseOnDemandFragment"
+        android:name="com.cmps312.seniorproject.DispenseOnDemandFragment"
+        android:label="fragment_dispense_on_demand"
+        tools:layout="@layout/fragment_dispense_on_demand" />
+    <fragment
+        android:id="@+id/addScheduleFragment"
+        android:name="com.cmps312.seniorproject.AddScheduleFragment"
+        android:label="fragment_add_schedule"
+        tools:layout="@layout/fragment_add_schedule" >
+        <action
+            android:id="@+id/action_addScheduleFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addGuestUserFragment"
+        android:name="com.cmps312.seniorproject.AddGuestUserFragment"
+        android:label="fragment_add_guest_user"
+        tools:layout="@layout/fragment_add_guest_user" >
+        <action
+            android:id="@+id/action_addGuestUserFragment_to_newGuestUserFragment"
+            app:destination="@id/newGuestUserFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newGuestUserFragment"
+        android:name="com.cmps312.seniorproject.NewGuestUserFragment"
+        android:label="fragment_new_guest_user"
+        tools:layout="@layout/fragment_new_guest_user" >
+        <action
+            android:id="@+id/action_newGuestUserFragment_to_addGuestUserFragment"
+            app:destination="@id/addGuestUserFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>RegisterFragment.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RegisterFragment.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.cmps312.seniorproject</span>
+
+<span class="s1">import android.content.ContentValues.TAG</span>
+<span class="s1">import android.os.Bundle</span>
+<span class="s1">import android.util.Log</span>
+<span class="s1">import android.view.View</span>
+<span class="s1">import android.widget.Toast</span>
+<span class="s1">import androidx.fragment.app.Fragment</span>
+<span class="s1">import androidx.navigation.fragment.findNavController</span>
+<span class="s1">import com.google.firebase.auth.FirebaseAuth</span>
+<span class="s1">import com.google.firebase.auth.FirebaseUser</span>
+<span class="s1">import kotlinx.android.synthetic.main.fragment_register2.*</span>
+
+
+<span class="s0">class </span><span class="s1">RegisterFragment : Fragment(R.layout.fragment_register2) {</span>
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onViewCreated(view: View</span><span class="s0">, </span><span class="s1">savedInstanceState: Bundle?) {</span>
+        <span class="s0">super</span><span class="s1">.onViewCreated(view</span><span class="s0">, </span><span class="s1">savedInstanceState)</span>
+
+        <span class="s1">registerBTN.setOnClickListener {</span>
+            <span class="s0">if </span><span class="s1">(signUp()) {</span>
+                <span class="s1">findNavController().navigate(R.id.action_registerFragment_to_loginFragment2)</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+
+        <span class="s1">registerLoginTV.setOnClickListener {</span>
+            <span class="s1">findNavController().navigate(R.id.action_registerFragment_to_loginFragment2)</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">signUp(): Boolean {</span>
+        <span class="s0">val </span><span class="s1">email = registerEmailET?.text.toString().toLowerCase().trim()</span>
+        <span class="s0">val </span><span class="s1">password = registerPasswordET?.text.toString().trim()</span>
+        <span class="s0">val </span><span class="s1">confirmPassword = confirmPasswordET?.text.toString().trim()</span>
+        <span class="s0">var </span><span class="s1">flag = </span><span class="s0">false</span>
+
+        <span class="s0">if </span><span class="s1">(</span>
+            <span class="s1">email.isNotEmpty() &amp;&amp;</span>
+            <span class="s1">password.isNotEmpty() &amp;&amp;</span>
+            <span class="s1">confirmPassword.isNotEmpty()</span>
+        <span class="s1">) {</span>
+            <span class="s0">if </span><span class="s1">(email.contains(</span><span class="s2">&quot;@&quot;</span><span class="s1">) &amp;&amp; email.takeLast(</span><span class="s3">4</span><span class="s1">).equals(</span><span class="s2">&quot;.com&quot;</span><span class="s1">)) {</span>
+                <span class="s0">if </span><span class="s1">(password.length &gt;= </span><span class="s3">6</span><span class="s1">) {</span>
+                    <span class="s0">if </span><span class="s1">(password == confirmPassword) {</span>
+                        <span class="s4">//Here we will register</span>
+                        <span class="s4">//Toast.makeText(context, email+password, Toast.LENGTH_SHORT).show()</span>
+                        <span class="s1">FirebaseAuth.getInstance().createUserWithEmailAndPassword(email</span><span class="s0">, </span><span class="s1">password)</span>
+                            <span class="s1">.addOnCompleteListener { task -&gt;</span>
+                                <span class="s0">if </span><span class="s1">(task.isSuccessful) {</span>
+                                    <span class="s0">val </span><span class="s1">firebaseUser: FirebaseUser = task.result!!.user!!</span>
+                                    <span class="s1">Toast.makeText(</span>
+                                        <span class="s1">context</span><span class="s0">,</span>
+                                        <span class="s2">&quot;User Added Successfully&quot;</span><span class="s0">,</span>
+                                        <span class="s1">Toast.LENGTH_SHORT</span>
+                                    <span class="s1">).show()</span>
+                                    <span class="s1">flag = </span><span class="s0">true</span>
+                                <span class="s1">}</span>
+
+                            <span class="s1">}.addOnFailureListener {</span>
+                                <span class="s1">Toast.makeText(</span>
+                                    <span class="s1">context</span><span class="s0">,</span>
+                                    <span class="s2">&quot;Failed To create User: </span><span class="s0">${</span><span class="s1">it.message</span><span class="s0">}</span><span class="s2">&quot;</span><span class="s0">,</span>
+                                    <span class="s1">Toast.LENGTH_SHORT</span>
+                                <span class="s1">).show()</span>
+                            <span class="s1">}</span>
+                        <span class="s0">return </span><span class="s1">flag</span>
+                    <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                        <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s2">&quot;Passwords are not the same&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT)</span>
+                            <span class="s1">.show()</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span><span class="s0">else</span><span class="s1">{</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s2">&quot;Password should be at least 6 characters&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT)</span>
+                        <span class="s1">.show()</span>
+                <span class="s1">}</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s2">&quot;Email Entered is Wrong&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span>
+            <span class="s1">}</span>
+
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s2">&quot;Filling All Fields is Required ***&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">flag</span>
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">checkPassword(password: String): Boolean {</span>
+        <span class="s0">var </span><span class="s1">lengthFlag = password.length &gt;= </span><span class="s3">6</span>
+        <span class="s0">var </span><span class="s1">lowerCaseFlag: Boolean = </span><span class="s0">false</span>
+        <span class="s0">var </span><span class="s1">upperCaseFlag: Boolean = </span><span class="s0">false</span>
+        <span class="s0">var </span><span class="s1">numberFlag: Boolean = </span><span class="s0">false</span>
+
+        <span class="s0">for </span><span class="s1">(n </span><span class="s0">in </span><span class="s1">password.indices) {</span>
+            <span class="s0">if </span><span class="s1">(password[n].isDigit()) numberFlag = </span><span class="s0">true</span>
+            <span class="s0">if </span><span class="s1">(password[n].isUpperCase()) upperCaseFlag = </span><span class="s0">true</span>
+            <span class="s0">if </span><span class="s1">(password[n].isLowerCase()) lowerCaseFlag = </span><span class="s0">true</span>
+        <span class="s1">}</span>
+
+        <span class="s0">if </span><span class="s1">(lengthFlag &amp;&amp; lowerCaseFlag &amp;&amp; upperCaseFlag &amp;&amp; numberFlag) {</span>
+            <span class="s0">return true</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s2">&quot;Password Entered is Wrong&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span>
+        <span class="s1">}</span>
+        <span class="s0">return false</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

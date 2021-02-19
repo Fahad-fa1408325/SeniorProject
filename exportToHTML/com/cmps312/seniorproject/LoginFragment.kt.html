@@ -1,0 +1,184 @@
+<html>
+<head>
+<title>LoginFragment.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #6a8759;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+LoginFragment.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.cmps312.seniorproject</span>
+
+<span class="s1">import android.content.Intent</span>
+<span class="s1">import android.os.Bundle</span>
+<span class="s1">import android.util.Log</span>
+<span class="s1">import android.view.View</span>
+<span class="s1">import android.widget.Toast</span>
+<span class="s1">import androidx.fragment.app.Fragment</span>
+<span class="s1">import androidx.navigation.fragment.findNavController</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignIn</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignInClient</span>
+<span class="s1">import com.google.android.gms.auth.api.signin.GoogleSignInOptions</span>
+<span class="s1">import com.google.android.gms.common.api.ApiException</span>
+<span class="s1">import com.google.firebase.auth.FirebaseAuth</span>
+<span class="s1">import com.google.firebase.auth.FirebaseUser</span>
+<span class="s1">import com.google.firebase.auth.GoogleAuthProvider</span>
+<span class="s1">import kotlinx.android.synthetic.main.fragment_login.*</span>
+
+
+<span class="s0">class </span><span class="s1">LoginFragment : Fragment(R.layout.fragment_login) {</span>
+
+    <span class="s1">lateinit </span><span class="s0">var </span><span class="s1">auth: FirebaseAuth</span>
+    <span class="s1">lateinit </span><span class="s0">var </span><span class="s1">googleSignInClient: GoogleSignInClient</span>
+
+    <span class="s1">companion </span><span class="s0">object </span><span class="s1">{</span>
+        <span class="s1">private const </span><span class="s0">val </span><span class="s1">RC_SIGN_IN = </span><span class="s2">1001</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onViewCreated(view: View</span><span class="s0">, </span><span class="s1">savedInstanceState: Bundle?) {</span>
+        <span class="s0">super</span><span class="s1">.onViewCreated(view</span><span class="s0">, </span><span class="s1">savedInstanceState)</span>
+
+        <span class="s0">val </span><span class="s1">gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)</span>
+            <span class="s1">.requestIdToken(getString(R.string.default_web_client_id))</span>
+            <span class="s1">.requestEmail()</span>
+            <span class="s1">.build()</span>
+        <span class="s1">googleSignInClient = GoogleSignIn.getClient(requireActivity()</span><span class="s0">, </span><span class="s1">gso)</span>
+        <span class="s1">auth = FirebaseAuth.getInstance()</span>
+
+        <span class="s1">loginBTN.setOnClickListener {</span>
+            <span class="s1">signIn()</span>
+        <span class="s1">}</span>
+
+        <span class="s1">loginGoogleBTN.setOnClickListener {</span>
+            <span class="s1">signInWithGoogle()</span>
+        <span class="s1">}</span>
+
+        <span class="s1">registerTV.setOnClickListener {</span>
+            <span class="s1">findNavController().navigate(R.id.action_loginFragment_to_registerFragment2)</span>
+        <span class="s1">}</span>
+
+
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">signIn(): Boolean {</span>
+        <span class="s0">val </span><span class="s1">email = loginEmailET?.text.toString().trim()</span>
+        <span class="s0">val </span><span class="s1">password = loginPasswordEt?.text.toString().trim()</span>
+        <span class="s0">var </span><span class="s1">flag = </span><span class="s0">false</span>
+
+        <span class="s0">if </span><span class="s1">(password.isNotEmpty() &amp;&amp; email.isNotEmpty()) {</span>
+            <span class="s1">FirebaseAuth.getInstance().signInWithEmailAndPassword(email</span><span class="s0">, </span><span class="s1">password)</span>
+                <span class="s1">.addOnCompleteListener { task -&gt;</span>
+                    <span class="s0">if </span><span class="s1">(task.isSuccessful) {</span>
+                        <span class="s0">val </span><span class="s1">firebaseUser: FirebaseUser = task.result!!.user!!</span>
+                        <span class="s1">Toast.makeText(</span>
+                            <span class="s1">context</span><span class="s0">,</span>
+                            <span class="s3">&quot;Signed In Successfully user </span><span class="s0">${</span><span class="s1">firebaseUser.uid</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">,</span>
+                            <span class="s1">Toast.LENGTH_SHORT</span>
+                        <span class="s1">).show()</span>
+
+                        <span class="s1">findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)</span>
+                        <span class="s1">flag = </span><span class="s0">true</span>
+                    <span class="s1">}</span>
+
+                <span class="s1">}.addOnFailureListener {</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s3">&quot;Failed To Sign in: </span><span class="s0">${</span><span class="s1">it.message</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT)</span>
+                        <span class="s1">.show()</span>
+                <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s3">&quot;Filling All Fields is Required ***&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">flag</span>
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">signInWithGoogle() {</span>
+        <span class="s4">// Configure Google Sign In</span>
+        <span class="s0">val </span><span class="s1">signInIntent = googleSignInClient.signInIntent</span>
+        <span class="s1">startActivityForResult(signInIntent</span><span class="s0">, </span><span class="s1">RC_SIGN_IN)</span>
+    <span class="s1">}</span>
+
+    <span class="s1">override </span><span class="s0">fun </span><span class="s1">onActivityResult(requestCode: Int</span><span class="s0">, </span><span class="s1">resultCode: Int</span><span class="s0">, </span><span class="s1">data: Intent?) {</span>
+        <span class="s0">super</span><span class="s1">.onActivityResult(requestCode</span><span class="s0">, </span><span class="s1">resultCode</span><span class="s0">, </span><span class="s1">data)</span>
+
+        <span class="s4">// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);</span>
+        <span class="s0">if </span><span class="s1">(requestCode == RC_SIGN_IN) {</span>
+            <span class="s0">val </span><span class="s1">task = GoogleSignIn.getSignedInAccountFromIntent(data)</span>
+            <span class="s0">val </span><span class="s1">exception = task.exception</span>
+            <span class="s0">if </span><span class="s1">(task.isSuccessful) {</span>
+                <span class="s0">try </span><span class="s1">{</span>
+                    <span class="s4">// Google Sign In was successful, authenticate with Firebase</span>
+                    <span class="s0">val </span><span class="s1">account = task.getResult(ApiException::</span><span class="s0">class</span><span class="s1">.java)!!</span>
+                    <span class="s1">Log.d(</span><span class="s3">&quot;SignInActivity&quot;</span><span class="s0">, </span><span class="s3">&quot;firebaseAuthWithGoogle:&quot; </span><span class="s1">+ account.id)</span>
+                    <span class="s1">Toast.makeText(</span>
+                        <span class="s1">context</span><span class="s0">,</span>
+                        <span class="s3">&quot;Google sign in Success&quot;</span><span class="s0">,</span>
+                        <span class="s1">Toast.LENGTH_SHORT</span>
+                    <span class="s1">).show()</span>
+                    <span class="s1">firebaseAuthWithGoogle(account.idToken!!)</span>
+                <span class="s1">} catch (e: ApiException) {</span>
+                    <span class="s4">// Google Sign In failed, update UI appropriately</span>
+                    <span class="s1">Log.w(</span><span class="s3">&quot;SignInActivity&quot;</span><span class="s0">, </span><span class="s3">&quot;Google sign in failed&quot;</span><span class="s0">, </span><span class="s1">e)</span>
+                    <span class="s1">Toast.makeText(</span>
+                        <span class="s1">context</span><span class="s0">,</span>
+                        <span class="s3">&quot;Google sign in failed </span><span class="s0">${</span><span class="s1">task.exception</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">,</span>
+                        <span class="s1">Toast.LENGTH_SHORT</span>
+                    <span class="s1">).show()</span>
+
+                <span class="s1">}</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s1">Log.w(</span><span class="s3">&quot;SignInActivity&quot;</span><span class="s0">, </span><span class="s1">exception.toString())</span>
+                <span class="s1">Toast.makeText(</span>
+                    <span class="s1">context</span><span class="s0">,</span>
+                    <span class="s3">&quot;login is not successful </span><span class="s0">${</span><span class="s1">task.exception</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">,</span>
+                    <span class="s1">Toast.LENGTH_SHORT</span>
+                <span class="s1">).show()</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s1">private </span><span class="s0">fun </span><span class="s1">firebaseAuthWithGoogle(idToken: String) {</span>
+        <span class="s0">val </span><span class="s1">credential = GoogleAuthProvider.getCredential(idToken</span><span class="s0">, null</span><span class="s1">)</span>
+        <span class="s1">auth.signInWithCredential(credential)</span>
+            <span class="s1">.addOnCompleteListener(requireActivity()) { task -&gt;</span>
+                <span class="s0">if </span><span class="s1">(task.isSuccessful) {</span>
+                    <span class="s0">val </span><span class="s1">user = auth.currentUser</span>
+                    <span class="s4">// Sign in success, update UI with the signed-in user's information</span>
+                    <span class="s1">Log.d(</span><span class="s3">&quot;SignInActivity&quot;</span><span class="s0">, </span><span class="s3">&quot;signInWithCredential:success&quot;</span><span class="s1">)</span>
+                    <span class="s0">if </span><span class="s1">(user != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">Toast.makeText(</span>
+                            <span class="s1">context</span><span class="s0">,</span>
+                            <span class="s3">&quot;signInWithCredential:success user UID: </span><span class="s0">${</span><span class="s1">user.uid</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">,</span>
+                            <span class="s1">Toast.LENGTH_SHORT</span>
+                        <span class="s1">).show()</span>
+                    <span class="s1">}</span>
+                    <span class="s4">//If everything works successfully, here we can take the user info</span>
+                    <span class="s1">findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)</span>
+                <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                    <span class="s4">// If sign in fails, display a message to the user.</span>
+                    <span class="s1">Log.w(</span><span class="s3">&quot;SignInActivity&quot;</span><span class="s0">, </span><span class="s3">&quot;signInWithCredential:failure&quot;</span><span class="s0">, </span><span class="s1">task.exception)</span>
+                    <span class="s1">Toast.makeText(</span>
+                        <span class="s1">context</span><span class="s0">,</span>
+                        <span class="s3">&quot;signInWithCredential:failure </span><span class="s0">${</span><span class="s1">task.exception</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">,</span>
+                        <span class="s1">Toast.LENGTH_SHORT</span>
+                    <span class="s1">).show()</span>
+
+                <span class="s1">}</span>
+
+            <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>
