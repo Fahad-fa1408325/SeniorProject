@@ -18,14 +18,14 @@
         android:layout_marginRight="32dp"
         android:background="@drawable/btn_bg"
         android:text="add"
-        android:textColor="#000000"
+        android:textColor="#FF2196F3"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.818" />
+        app:layout_constraintVertical_bias="0.856" />
 
     <Button
         android:id="@+id/pickTimeBTN"
@@ -37,14 +37,14 @@
         android:layout_marginRight="32dp"
         android:background="@drawable/btn_bg"
         android:text="Pick Time"
-        android:textColor="#000000"
+        android:textColor="#FF2196F3"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.437" />
+        app:layout_constraintVertical_bias="0.444" />
 
     <Button
         android:id="@+id/scheduleCancelBTN"
@@ -56,14 +56,14 @@
         android:layout_marginRight="32dp"
         android:background="@drawable/btn_bg"
         android:text="cancel"
-        android:textColor="#000000"
+        android:textColor="#FF2196F3"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.894" />
+        app:layout_constraintVertical_bias="0.929" />
 
     <EditText
         android:id="@+id/pillNameET"
@@ -90,7 +90,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.248" />
+        app:layout_constraintVertical_bias="0.275" />
 
     <Spinner
         android:id="@+id/pillSP"
@@ -100,7 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.337" />
+        app:layout_constraintVertical_bias="0.361" />
 
     <TextView
         android:id="@+id/textView3"
@@ -124,9 +124,56 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.52" />
 
+    <EditText
+        android:id="@+id/repeadtlyETN"
+        android:layout_width="346dp"
+        android:layout_height="46dp"
+        android:background="@drawable/input_bg"
+        android:drawableLeft="@drawable/ic_wall_clock"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Enter the Duration (Every ... Hours ) "
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.705" />
+
+    <EditText
+        android:id="@+id/dosageETN"
+        android:layout_width="346dp"
+        android:layout_height="46dp"
+        android:background="@drawable/input_bg"
+        android:drawableLeft="@drawable/ic_eyedropper"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Enter The Dosage Per Time"
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.601" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

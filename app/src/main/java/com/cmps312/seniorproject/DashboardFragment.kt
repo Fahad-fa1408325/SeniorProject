@@ -22,6 +22,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

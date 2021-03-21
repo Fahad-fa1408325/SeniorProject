@@ -9,24 +9,49 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.cmps312.seniorproject.model.alarm.AlarmReceiver
+import com.cmps312.seniorproject.model.entity.Pill
+import com.cmps312.seniorproject.ui.viewmodel.PillViewModel
 import kotlinx.android.synthetic.main.fragment_add_schedule.*
+import kotlinx.android.synthetic.main.fragment_schedule.*
+import kotlinx.android.synthetic.main.pill_item.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random.Default.nextInt
 
 class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
-    var hours: Int = 0
-    var minutes: Int = 0
-    var alarmStartTime: Long = 0
+
+    private val pillViewModel: PillViewModel by activityViewModels()
+
+    var hours: Int = 66
+    var minutes: Int = 66
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val notificationId = 1
+        var randomValue = (1..100000).random()
+        var previousPill = pillViewModel.selectedpill
+        var pill = Pill()
+        var newPill = Pill()
+
+        if (!previousPill.name.isNullOrEmpty()) {
+            pillNameET.setText(previousPill.name)
+            timeTV.text = previousPill.time
+            dosageETN.setText(Integer.toString(previousPill.dosage))
+            repeadtlyETN.setText(Integer.toString(previousPill.repeadtly))
+            randomValue = previousPill.requestKey
+            addNewScheduleBTN.text = "Edit"
+
+            var time = previousPill.time.split(":")
+            hours = time[0].toInt()
+            minutes = time[1].toInt()
+        }
 
         pickTimeBTN.setOnClickListener {
+
             val cal = Calendar.getInstance()
             val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
                 cal.set(Calendar.HOUR_OF_DAY, hour)
@@ -34,7 +59,7 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
                 timeTV.text = SimpleDateFormat("HH:mm").format(cal.time)
                 hours = hour
                 minutes = minute
-                alarmStartTime = cal.timeInMillis
+
             }
             TimePickerDialog(
                 view.context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(
@@ -44,36 +69,115 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
         }
 
         addNewScheduleBTN.setOnClickListener {
-            if (hours == 0 && minutes == 0 && alarmStartTime.equals(0)) {
+            if (hours == 66 || minutes == 66 || pillNameET.text.isNullOrEmpty() || dosageETN.text.toString()
+                    .isNullOrEmpty() || repeadtlyETN.text.toString()
+                    .isNullOrEmpty()
+            ) {
                 Toast.makeText(
                     context,
-                    "Please Choose a time",
+                    "Filling All Fields is Required ***",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
+            } else {
 
-            var intent = Intent(context, AlarmReceiver::class.java)
-            intent.putExtra("notificationId", 1)
-            intent.putExtra("message", pillNameET.text)
-            alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
-                PendingIntent.getBroadcast(context, 0, intent, 0)
+                if (!previousPill.name.isNullOrEmpty()) {
+
+                    previousPill.name = pillNameET.text.toString()
+                    previousPill.time = timeTV.text.toString()
+                    previousPill.dosage = dosageETN.text.toString().toInt()
+                    previousPill.repeadtly = repeadtlyETN.text.toString().toInt()
+                    previousPill.uid = pillViewModel.currentUser.uid
+
+                    pillViewModel?.selectedpill?.let { it1 -> pillViewModel.updatePill(it1) }
+                    pillViewModel.selectedpill = pill
+                    addNewScheduleBTN.text = "Edit"
+
+                    alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                        intent.putExtra("message", pillNameET.text.toString())
+                        PendingIntent.getBroadcast(
+                            context,
+                            randomValue,
+                            intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    }
+
+                    Toast.makeText(context, "$hours + $minutes", Toast.LENGTH_SHORT).show()
+                    val cal: Calendar = Calendar.getInstance().apply {
+                        timeInMillis = System.currentTimeMillis()
+                        set(Calendar.HOUR_OF_DAY, hours)
+                        set(Calendar.MINUTE, minutes)
+                        set(Calendar.SECOND, 0)
+                    }
+
+                    alarmMgr?.set(
+                        AlarmManager.RTC_WAKEUP, cal.timeInMillis,
+                        alarmIntent
+                    )
+
+                    alarmMgr?.setRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        cal.timeInMillis,
+                        3600000 * dosageETN.text.toString().toLong(),
+                        alarmIntent
+                    )
+
+                    Toast.makeText(context, "Alarm edited Successfully", Toast.LENGTH_SHORT).show()
+
+                    activity?.onBackPressed()
+
+                } else {
+
+                    newPill.name = pillNameET.text.toString()
+                    newPill.time = timeTV.text.toString()
+                    newPill.dosage = dosageETN.text.toString().toInt()
+                    newPill.repeadtly = repeadtlyETN.text.toString().toInt()
+                    newPill.uid = pillViewModel.currentUser.uid
+                    newPill.requestKey = randomValue
+
+                    pillViewModel.addPill(newPill)
+                    pillViewModel.selectedpill = pill
+
+                    alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                        intent.putExtra("message", pillNameET.text.toString())
+                        PendingIntent.getBroadcast(
+                            context,
+                            randomValue,
+                            intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    }
+
+                    Toast.makeText(context, "$hours + $minutes", Toast.LENGTH_SHORT).show()
+                    val cal: Calendar = Calendar.getInstance().apply {
+                        timeInMillis = System.currentTimeMillis()
+                        set(Calendar.HOUR_OF_DAY, hours)
+                        set(Calendar.MINUTE, minutes)
+                        set(Calendar.SECOND, 0)
+                    }
+
+                    alarmMgr?.set(
+                        AlarmManager.RTC_WAKEUP, cal.timeInMillis,
+                        alarmIntent
+                    )
+
+                    alarmMgr?.setRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        cal.timeInMillis,
+                        3600000 * dosageETN.text.toString().toLong(),
+                        alarmIntent
+                    )
+
+                    Toast.makeText(context, "Alarm set Successfully", Toast.LENGTH_SHORT).show()
+                    activity?.onBackPressed()
+                }
             }
-            //var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
-            /*alarmMgr?.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                alarmStartTime,
-                24 * 60 * 60 * 1000,
-                pendingIntent
-            )*/
-            Toast.makeText(context, "Alarm set Successfully", Toast.LENGTH_SHORT).show()
-            activity?.onBackPressed()
         }
 
-
-
-
         scheduleCancelBTN.setOnClickListener {
+            pillViewModel.selectedpill = pill
             activity?.onBackPressed()
         }
 

@@ -19,7 +19,7 @@
             android:layout_marginLeft="140dp"
             android:layout_marginTop="50dp"
             android:text="Dashboard"
-            android:textColor="#FFFFFF"
+            android:textColor="#4F5254"
             android:textSize="24dp"
             android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Set/Edit Schedule"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 
@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Statistics"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 
@@ -116,14 +116,14 @@
                     <ImageView
                         android:layout_width="54dp"
                         android:layout_height="54dp"
-                        android:src="@drawable/ic_nfc2" />
+                        android:src="@drawable/ic_nfc" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Connect Device to WIFI"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 
@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Dispense on Demand"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 
@@ -187,7 +187,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Add Guest User"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 
@@ -219,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="LogOut"
-                        android:textColor="#000000"
+                        android:textColor="#FF2196F3"
                         android:textSize="16dp" />
 
 

@@ -29,6 +29,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -36,6 +39,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures{
+        dataBinding true
+    }
+
 }
 
 dependencies {
@@ -60,6 +68,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC"
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.+'
+    //implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 //    implementation 'com.google.android.material:material:1.2.0-alpha01'
     implementation 'com.google.android.material:material:1.2.1'
     // Kotlin extensions - activity-ktx & fragment-ktx

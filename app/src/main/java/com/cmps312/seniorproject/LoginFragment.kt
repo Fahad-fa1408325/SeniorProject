@@ -1,12 +1,18 @@
 package com.cmps312.seniorproject
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.cmps312.seniorproject.model.alarm.AlarmReceiver
+import com.cmps312.seniorproject.ui.viewmodel.PillViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -15,12 +21,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
+import java.util.*
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
+    private val pillViewModel: PillViewModel by activityViewModels()
+
     lateinit var auth: FirebaseAuth
     lateinit var googleSignInClient: GoogleSignInClient
+
 
     companion object {
         private const val RC_SIGN_IN = 1001
@@ -29,6 +39,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        pillViewModel.loggedInFlag = false
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -62,11 +74,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
-                        Toast.makeText(
+                        pillViewModel.currentUser.email = email
+                        pillViewModel.currentUser.uid = firebaseUser.uid
+                        pillViewModel.addFirebaseUser(pillViewModel.currentUser)
+
+                        /*Toast.makeText(
                             context,
                             "Signed In Successfully user ${firebaseUser.uid}",
                             Toast.LENGTH_SHORT
-                        ).show()
+                        ).show()*/
 
                         findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
                         flag = true
@@ -82,7 +98,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         return flag
     }
 
-     private fun signInWithGoogle() {
+    private fun signInWithGoogle() {
         // Configure Google Sign In
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -136,11 +152,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("SignInActivity", "signInWithCredential:success")
                     if (user != null) {
-                        Toast.makeText(
+                        pillViewModel.currentUser.email = user.email.toString()
+                        pillViewModel.currentUser.uid = user.uid
+                        pillViewModel.addFirebaseUser(pillViewModel.currentUser)
+
+                        /*Toast.makeText(
                             context,
                             "signInWithCredential:success user UID: ${user.uid}",
                             Toast.LENGTH_SHORT
-                        ).show()
+                        ).show()*/
+
                     }
                     //If everything works successfully, here we can take the user info
                     findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)

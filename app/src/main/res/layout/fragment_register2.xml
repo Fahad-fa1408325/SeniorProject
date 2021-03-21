@@ -13,7 +13,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/btn_bg"
         android:text="Register"
-        android:textColor="#191515"
+        android:textColor="#FF2196F3"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/confirmPasswordET"
@@ -43,7 +43,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
         android:text="Login"
-        android:textColor="#000000"
+        android:textColor="#FF2196F3"
         android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
         app:layout_constraintStart_toEndOf="@+id/textView5" />
