@@ -35,11 +35,13 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             val name = "Channel 1"
             val descriptionText = "Pill's Notification channel"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel("channel1", name, importance).apply {
                 description = descriptionText
+
             }
 
             var notificationManager =

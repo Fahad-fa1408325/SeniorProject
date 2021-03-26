@@ -30,12 +30,16 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         val auth = FirebaseAuth.getInstance()
 
         removePreviousAlarms()
-        addPreviousAlarms()
+        getPreviousGuestUsers()
+        getPreviousAlarms()
+        //getMainUserPills()
+
 
         logOutCardView.setOnClickListener {
-            activity?.onBackPressed()
+            removePreviousAlarms()
             Toast.makeText(context, "Logged out Successfully", Toast.LENGTH_SHORT).show()
             auth.signOut()
+            activity?.onBackPressed()
         }
 
         nfcCardView.setOnClickListener {
@@ -101,13 +105,14 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
     }
 
-    private fun addPreviousAlarms() {
+    private fun getPreviousAlarms() {
 
         if (!pillViewModel.loggedInFlag) {
-            pillViewModel.getPills(pillViewModel.currentUser.uid)
+            pillViewModel.getPills(pillViewModel.currentUser.uid, pillViewModel.currentUser.email)
 
             pillViewModel.pills.observe(viewLifecycleOwner) { pill ->
                 pill.forEach {
+                    it.mainUserFlag=true
                     var time = it.time.split(":")
                     var hours = time[0].toInt()
                     var minutes = time[1].toInt()
@@ -145,10 +150,42 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
                 }
             }
-
             pillViewModel.loggedInFlag = true
-
         }
     }
+
+    private fun getPreviousGuestUsers() {
+
+        if (!pillViewModel.loggedInFlag) {
+            pillViewModel.getGuestUsers(pillViewModel.currentUser.uid)
+        }
+
+    }
+
+    /*private fun getMainUserPills() {
+        if (!pillViewModel.loggedInFlag) {
+
+            pillViewModel.getAllGuestUsers()
+
+            pillViewModel.tempGuestUsers.observe(viewLifecycleOwner) { users ->
+
+                users.forEach {
+                    if (it.email == pillViewModel.currentUser.email) {
+                        pillViewModel.mainUserUID = it.uid
+                        pillViewModel.getMainUserPills(it.uid)
+                    }
+                }
+
+            }
+            pillViewModel.mainUserPills.observe(viewLifecycleOwner) { pill ->
+                pill.forEach {
+                    it.mainUserFlag = false
+
+                }
+                pillViewModel.loggedInFlag = true
+            }
+        }
+
+    }*/
 
 }

@@ -1,6 +1,7 @@
 package com.cmps312.seniorproject.ui.account
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,11 +19,29 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
         }
 
     inner class PillViewHolder(private val binding: PillItemBinding) :
+
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(pill: Pill) {
+
             binding.pill = pill
-            binding.editBTN.setOnClickListener { editPillListener(pill) }
-            binding.deleteBTN.setOnClickListener { deletePillListener(pill) }
+
+            if (pill.mainUserFlag) {
+
+                binding.editBTN.visibility = View.VISIBLE
+                binding.deleteBTN.visibility = View.VISIBLE
+
+                binding.editBTN.setOnClickListener { editPillListener(pill) }
+                binding.deleteBTN.setOnClickListener { deletePillListener(pill) }
+                binding.belongsToET.visibility = View.INVISIBLE
+
+            } else {
+
+                binding.editBTN.visibility = View.INVISIBLE
+                binding.deleteBTN.visibility = View.INVISIBLE
+                binding.mainUserET.text = pill.mainUserEmail
+
+            }
         }
     }
 

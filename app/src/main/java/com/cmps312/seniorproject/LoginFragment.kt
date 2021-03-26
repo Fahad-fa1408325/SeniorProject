@@ -1,8 +1,5 @@
 package com.cmps312.seniorproject
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.cmps312.seniorproject.model.alarm.AlarmReceiver
 import com.cmps312.seniorproject.ui.viewmodel.PillViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
-import java.util.*
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -177,7 +172,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
 
             }
-    }
+      }
 
 
 }

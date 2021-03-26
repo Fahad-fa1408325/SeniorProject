@@ -50,7 +50,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
     }
 
-
     private fun editPillListener(pill: Pill) {
         pillViewModel.selectedpill = pill
         findNavController().navigate(R.id.action_scheduleFragment_to_addScheduleFragment)
@@ -88,7 +87,8 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
 
 
-        pillViewModel.pills.value?.let {
+         pillViewModel.pills.value?.let {
+             pill.mainUserFlag=true
             pillViewModel.deletePill(pill)
             alarmMgr?.cancel(this.alarmIntent)
 

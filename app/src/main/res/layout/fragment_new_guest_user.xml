@@ -12,51 +12,45 @@
         android:id="@+id/addUserBTN"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="300dp"
         android:background="@drawable/btn_bg"
         android:text="Add User"
         android:textColor="#000000"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/loginEmailET2"
+        app:layout_constraintEnd_toEndOf="@+id/gusetUserEmailET"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/loginEmailET2"
-        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEt"
-        app:layout_constraintVertical_bias="0.079" />
+        app:layout_constraintStart_toStartOf="@+id/gusetUserEmailET"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.679" />
 
     <Button
         android:id="@+id/cancelBTN"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="240dp"
         android:background="@drawable/btn_bg"
         android:text="cancel"
         android:textColor="#000000"
         app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/loginEmailET2"
+        app:layout_constraintEnd_toEndOf="@+id/gusetUserEmailET"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/loginEmailET2"
-        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEt"
-        app:layout_constraintVertical_bias="0.079" />
+        app:layout_constraintStart_toStartOf="@+id/gusetUserEmailET"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
 
     <EditText
-        android:id="@+id/loginEmailET2"
+        android:id="@+id/gusetUserEmailET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:layout_marginBottom="408dp"
         android:background="@drawable/input_bg"
         android:drawableLeft="@drawable/ic_baseline_email_24"
         android:drawablePadding="10dp"
         android:ems="10"
-        android:hint="Email"
+        android:hint="Guest Email "
         android:inputType="textPersonName"
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
@@ -68,8 +62,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.044" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.484" />
 
     <ImageView
         android:id="@+id/imageView4"

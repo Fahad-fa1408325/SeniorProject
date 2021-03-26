@@ -14,9 +14,9 @@ object PillRepo {
     val TAG = "PillListRepo"
     val db by lazy { FirebaseFirestore.getInstance() }
     val mainDeviceDocumentRef by lazy { db.collection("maindevice") }
-    val mainUserDocumentRef by lazy { db.collection("maindevice/guest_users") }
-    val guestUserDocumentRef by lazy { db.collection("maindevice/main_users") }
-    val pillsDocumentRef by lazy { db.collection("Pills") }
+    val mainUserDocumentRef by lazy { db.collection("main_users") }
+    val guestUserDocumentRef by lazy { db.collection("guest_users") }
+    val pillsDocumentRef by lazy { db.collection("pills") }
 
     //all the magic of caching
     init {
@@ -56,17 +56,50 @@ object PillRepo {
 
     }
 
-    suspend fun getPillListByUid(uid: String): MutableList<Pill> {
+    suspend fun getPillListByUid(uid: String, email: String): MutableList<Pill> {
         val querySnapshot = pillsDocumentRef
             .whereEqualTo("uid", uid)
             .get().await()
 
         val pills = mutableListOf<Pill>()
+
         querySnapshot.forEach {
             val pill = it.toObject(Pill::class.java)
+            pill.mainUserFlag = true
+            pill.mainUserEmail = ""
             pill.pillId = it.id
             pills.add(pill)
         }
+
+        var users = getAllGuestUsers()
+        var tempUsers = mutableListOf<GuestUser>()
+
+        users.forEach {
+            if (it.email == email) {
+                tempUsers.add(it)
+            }
+        }
+
+        tempUsers.forEach { user ->
+            var newUid = user.uid
+            var querySnapshot2 = pillsDocumentRef
+                .whereEqualTo("uid", newUid)
+                .get().await()
+            querySnapshot2.forEach {
+                val pill = it.toObject(Pill::class.java)
+                pill.mainUserFlag = false
+                pill.mainUserEmail = user.mainUserEmail
+                pill.pillId = it.id
+                pills.add(pill)
+            }
+        }
+
+        pills.forEach {
+            if (it.uid != uid) {
+                it.mainUserFlag = false
+            }
+        }
+
         return pills
     }
 
@@ -86,6 +119,23 @@ object PillRepo {
         return pills
     }
 
+    suspend fun getAllGuestUsers(): MutableList<GuestUser> {
+
+        val querySnapshot = guestUserDocumentRef
+            .get().await()
+
+        val users = mutableListOf<GuestUser>()
+
+        querySnapshot.forEach {
+            val user = it.toObject(GuestUser::class.java)
+            user.id = it.id
+            users.add(user)
+        }
+
+        return users
+    }
+
+
     suspend fun addPill(pill: Pill) = pillsDocumentRef.add(pill)
         .addOnSuccessListener { Log.d(TAG, "Successfully added new pill") }
         .addOnFailureListener { Log.d(TAG, "Was not able to add the new pill") }
@@ -94,6 +144,10 @@ object PillRepo {
         pillsDocumentRef.document(id).get().await().toObject(Pill::class.java)
 
     suspend fun deletePill(pill: Pill) = pill.pillId?.let { pillsDocumentRef.document(it).delete() }
+
+    suspend fun deleteGuestUser(user: GuestUser) =
+        user.id?.let { guestUserDocumentRef.document(it).delete() }
+
     suspend fun updatePill(pill: Pill) =
         pill.pillId?.let { pillsDocumentRef.document(it).set(pill) }
 
