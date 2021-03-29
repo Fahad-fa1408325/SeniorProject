@@ -180,15 +180,15 @@
 
             <TextView
                 android:id="@+id/mainUserET"
-                android:layout_width="205dp"
-                android:layout_height="20dp"
+                android:layout_width="222dp"
+                android:layout_height="21dp"
                 android:text="@{String.valueOf(pill.mainUserEmail)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.937"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.947" />
+                app:layout_constraintVertical_bias="0.945" />
 
             <TextView
                 android:id="@+id/belongsToET"
@@ -197,10 +197,10 @@
                 android:text="Belongs To:"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.257"
+                app:layout_constraintHorizontal_bias="0.16"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.947" />
+                app:layout_constraintVertical_bias="0.946" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

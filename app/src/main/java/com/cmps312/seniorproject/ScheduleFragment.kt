@@ -4,12 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,7 +15,6 @@ import com.cmps312.seniorproject.model.entity.Pill
 import com.cmps312.seniorproject.ui.account.PillAdapter
 import com.cmps312.seniorproject.ui.viewmodel.PillViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_add_schedule.*
 import kotlinx.android.synthetic.main.fragment_schedule.*
 import java.util.*
 
@@ -51,7 +46,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun editPillListener(pill: Pill) {
-        pillViewModel.selectedpill = pill
+        pillViewModel.selectedPill = pill
         findNavController().navigate(R.id.action_scheduleFragment_to_addScheduleFragment)
     }
 
@@ -88,7 +83,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
 
          pillViewModel.pills.value?.let {
-             pill.mainUserFlag=true
             pillViewModel.deletePill(pill)
             alarmMgr?.cancel(this.alarmIntent)
 

@@ -14,11 +14,8 @@ import com.cmps312.seniorproject.model.alarm.AlarmReceiver
 import com.cmps312.seniorproject.model.entity.Pill
 import com.cmps312.seniorproject.ui.viewmodel.PillViewModel
 import kotlinx.android.synthetic.main.fragment_add_schedule.*
-import kotlinx.android.synthetic.main.fragment_schedule.*
-import kotlinx.android.synthetic.main.pill_item.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random.Default.nextInt
 
 class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
 
@@ -33,7 +30,7 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
         super.onViewCreated(view, savedInstanceState)
 
         var randomValue = (1..100000).random()
-        var previousPill = pillViewModel.selectedpill
+        var previousPill = pillViewModel.selectedPill
         var pill = Pill()
         var newPill = Pill()
 
@@ -86,10 +83,13 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
                     previousPill.time = timeTV.text.toString()
                     previousPill.dosage = dosageETN.text.toString().toInt()
                     previousPill.repeadtly = repeadtlyETN.text.toString().toInt()
-                    previousPill.uid = pillViewModel.currentUser.uid
+                    previousPill.uid = previousPill.uid
+                    previousPill.mainUserFlag = true
+                    previousPill.editFromMain = false
+                    previousPill.readFromMain = false
 
-                    pillViewModel?.selectedpill?.let { it1 -> pillViewModel.updatePill(it1) }
-                    pillViewModel.selectedpill = pill
+                    pillViewModel?.selectedPill?.let { it1 -> pillViewModel.updatePill(it1) }
+                    pillViewModel.selectedPill = pill
                     addNewScheduleBTN.text = "Edit"
 
                     alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -135,9 +135,12 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
                     newPill.repeadtly = repeadtlyETN.text.toString().toInt()
                     newPill.uid = pillViewModel.currentUser.uid
                     newPill.requestKey = randomValue
+                    newPill.mainUserFlag = true
+                    newPill.editFromMain = false
+                    newPill.readFromMain = false
 
                     pillViewModel.addPill(newPill)
-                    pillViewModel.selectedpill = pill
+                    pillViewModel.selectedPill = pill
 
                     alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                     alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
@@ -177,7 +180,7 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
         }
 
         scheduleCancelBTN.setOnClickListener {
-            pillViewModel.selectedpill = pill
+            pillViewModel.selectedPill = pill
             activity?.onBackPressed()
         }
 

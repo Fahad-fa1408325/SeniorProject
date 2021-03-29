@@ -4,6 +4,7 @@ import android.util.Log
 import com.cmps312.seniorproject.LoginFragment
 import com.cmps312.seniorproject.model.entity.FirebaseUser
 import com.cmps312.seniorproject.model.entity.GuestUser
+import com.cmps312.seniorproject.model.entity.MainUser
 import com.cmps312.seniorproject.model.entity.Pill
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestoreSettings
@@ -56,12 +57,27 @@ object PillRepo {
 
     }
 
+    suspend fun getMainUser(uid: String): MainUser {
+        var mainUser = MainUser()
+
+        val querySnapshot = mainUserDocumentRef
+            .whereEqualTo("uid", uid)
+            .get().await()
+
+        querySnapshot.forEach {
+            mainUser = it.toObject(MainUser::class.java)
+        }
+        return mainUser
+    }
+
     suspend fun getPillListByUid(uid: String, email: String): MutableList<Pill> {
         val querySnapshot = pillsDocumentRef
             .whereEqualTo("uid", uid)
             .get().await()
 
         val pills = mutableListOf<Pill>()
+        var mainUser = getMainUser(uid)
+        var connectedFlag = true
 
         querySnapshot.forEach {
             val pill = it.toObject(Pill::class.java)
@@ -94,9 +110,39 @@ object PillRepo {
             }
         }
 
-        pills.forEach {
-            if (it.uid != uid) {
-                it.mainUserFlag = false
+        if (!mainUser.uid.isNullOrEmpty()) {
+            connectedFlag = false
+            val querySnapshot3 = pillsDocumentRef
+                .whereEqualTo("mainUserEmail", "Main Device")
+                .get().await()
+
+            querySnapshot3.forEach {
+                val pill = it.toObject(Pill::class.java)
+                pill.mainUserFlag = false
+                pill.editFromMain = true
+                pill.pillId = it.id
+                pills.add(pill)
+            }
+        }
+
+        if (connectedFlag) {
+            tempUsers.forEach {
+                mainUser = getMainUser(it.uid)
+                if (it.mainUserEmail == mainUser.email) {
+
+                    val querySnapshot3 = pillsDocumentRef
+                        .whereEqualTo("mainUserEmail", "Main Device")
+                        .get().await()
+
+                    querySnapshot3.forEach {
+                        val pill = it.toObject(Pill::class.java)
+                        pill.mainUserFlag = false
+                        pill.editFromMain = false
+                        pill.readFromMain = true
+                        pill.pillId = it.id
+                        pills.add(pill)
+                    }
+                }
             }
         }
 
@@ -128,6 +174,22 @@ object PillRepo {
 
         querySnapshot.forEach {
             val user = it.toObject(GuestUser::class.java)
+            user.id = it.id
+            users.add(user)
+        }
+
+        return users
+    }
+
+    suspend fun getAllMainUsers(): MutableList<MainUser> {
+
+        val querySnapshot = mainUserDocumentRef
+            .get().await()
+
+        val users = mutableListOf<MainUser>()
+
+        querySnapshot.forEach {
+            val user = it.toObject(MainUser::class.java)
             user.id = it.id
             users.add(user)
         }

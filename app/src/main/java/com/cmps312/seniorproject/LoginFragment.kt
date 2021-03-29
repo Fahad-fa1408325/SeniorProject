@@ -28,7 +28,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
     companion object {
+
         private const val RC_SIGN_IN = 1001
+
     }
 
 

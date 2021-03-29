@@ -108,11 +108,15 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private fun getPreviousAlarms() {
 
         if (!pillViewModel.loggedInFlag) {
+
+            pillViewModel.getMainUser(pillViewModel.currentUser.uid)
             pillViewModel.getPills(pillViewModel.currentUser.uid, pillViewModel.currentUser.email)
 
+
             pillViewModel.pills.observe(viewLifecycleOwner) { pill ->
+
                 pill.forEach {
-                    it.mainUserFlag=true
+
                     var time = it.time.split(":")
                     var hours = time[0].toInt()
                     var minutes = time[1].toInt()
@@ -136,15 +140,12 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                         set(Calendar.SECOND, 0)
                     }
 
-                    alarmMgr?.set(
-                        AlarmManager.RTC_WAKEUP, cal.timeInMillis,
-                        alarmIntent
-                    )
+
 
                     alarmMgr?.setRepeating(
                         AlarmManager.RTC_WAKEUP,
                         cal.timeInMillis,
-                        3600000 * it.dosage.toString().toLong(),
+                        3600000 * it.repeadtly.toString().toLong(),
                         alarmIntent
                     )
 

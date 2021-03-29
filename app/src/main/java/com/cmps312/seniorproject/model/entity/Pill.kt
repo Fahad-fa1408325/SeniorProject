@@ -14,6 +14,9 @@ data class Pill(
     var uid: String = "",
     var mainUserFlag: Boolean = true,
     var mainUserEmail: String = "",
-    var requestKey: Int = 0
+    var requestKey: Int = 0,
+    var readFromMain: Boolean = false,
+    var editFromMain: Boolean = false,
+    var percentage: Double = 0.0
 
 ) : Parcelable
