@@ -54,6 +54,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register2) {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     flag = true
+                                    activity?.onBackPressed()
                                 }
 
                             }.addOnFailureListener {

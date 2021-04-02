@@ -143,7 +143,7 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
         Log.d("checkMainUser", "${mainUser.email} Hello")
 
-        PillRepo.pillsDocumentRef.addSnapshotListener { snapshot, error ->
+        var pillListener = PillRepo.pillsDocumentRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
 
             val pills = mutableListOf<Pill>()
@@ -213,41 +213,6 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
                     }
                 }
-                /*getMainUser(currentUser?.uid)
-                if (!mainUser.uid.isNullOrEmpty()) {
-                    connectedFlag = false
-                    snapshot?.forEach {
-                        val pill = it.toObject(Pill::class.java)
-                        if (pill.mainUserEmail == "Main Device") {
-                            pill.mainUserFlag = false
-                            pill.readFromMain = false
-                            pill.editFromMain = true
-                            pill.pillId = it.id
-                            pills.add(pill)
-                        }
-                    }
-                    Log.d("mainUserFlag", "passes through mainFlag")
-
-                }*/
-
-                /*if (connectedFlag) {
-                    tempUsers.forEach { user ->
-                        getMainUser(user.uid)
-                        if (user.mainUserEmail == mainUser.email) {
-                            snapshot?.forEach {
-                                val pill = it.toObject(Pill::class.java)
-                                if (pill.mainUserEmail == "Main Device") {
-                                    pill.mainUserFlag = false
-                                    pill.editFromMain = false
-                                    pill.readFromMain = true
-                                    pill.pillId = it.id
-                                    pills.add(pill)
-                                }
-                            }
-
-                        }
-                    }
-                }*/
 
                 pills.forEach {
                     Log.d(
@@ -255,6 +220,7 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
                         "name :${it.name} + read :${it.readFromMain} + edit :${it.editFromMain} + main : ${it.mainUserFlag}"
                     )
                 }
+
                 Log.d("currentPill", "Finished")
                 Log.d("currentPill", "main user :${mainUser.email}")
                 Log.d("currentPill", "connected :$connectedFlag")
@@ -287,14 +253,35 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
         PillRepo.mainUserDocumentRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
 
-            var tempMainUser = MainUser()
+            /*
+            var pill = Pill()
+            pill.name = "Panadrex"
+            pill.time = "13:16"
+            pill.dosage = 1
+            pill.repeadtly = 1
+            pill.pillId = "TVMYawrF9j9MAKtWUfIP"
+            pill.uid = "o45WOPsSsuhqSBTNWyxlIAXUx4M8"
+            pill.mainUserFlag = true
+            pill.mainUserEmail = ""
+            pill.requestKey = 70416
+            pill.readFromMain = false
+            pill.editFromMain = false
+            pill.percentage = 0.0
+            pill.demanded = 0
+            */
 
             snapshot?.forEach {
-                tempMainUser = it.toObject(MainUser::class.java)
-            }
-            mainUser = tempMainUser
 
-            getPills(currentUser?.uid, currentUser?.email)
+                var tempMainUser = it.toObject(MainUser::class.java)
+
+                if (tempMainUser.uid == currentUser?.uid) {
+
+                    mainUser = tempMainUser
+
+                }
+
+            }
+
         }
 
     }

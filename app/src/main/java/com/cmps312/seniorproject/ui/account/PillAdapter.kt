@@ -1,5 +1,6 @@
 package com.cmps312.seniorproject.ui.account
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -41,6 +42,7 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
                     "adapter",
                     "name :${pill.name} main flag"
                 )
+                binding.pillImageView.setImageResource(R.drawable.ic_medicine)
             } else if (pill.editFromMain) {
                 binding.editBTN.setOnClickListener { editPillListener(pill) }
                 binding.deleteBTN.visibility = View.INVISIBLE
@@ -51,6 +53,8 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
                     "adapter",
                     "name :${pill.name} edit flag"
                 )
+                binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
+                binding.editBTN.setBackgroundColor(Color.RED)
 
             } else if (pill.readFromMain) {
                 val string = "${pill.uid} on ${pill.mainUserEmail}"
@@ -62,6 +66,7 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
                     "adapter",
                     "name :${pill.name} + read flag"
                 )
+                binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
             } else {
 
                 binding.mainUserET.text = pill.mainUserEmail
@@ -73,6 +78,7 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
                     "adapter",
                     "name :${pill.name} passes through else"
                 )
+                binding.pillImageView.setImageResource(R.drawable.ic_medicine2)
             }
 
         }

@@ -43,7 +43,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
 
         nfcCardView.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboardFragment_to_NFCFragment)
+            //findNavController().navigate(R.id.action_dashboardFragment_to_NFCFragment)
+            val intent = Intent(context, NFCFragment::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context?.startActivity(intent)
         }
 
         scheduleCardView.setOnClickListener {
@@ -59,8 +62,17 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
 
         dispenseOnDemandCardView.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboardFragment_to_dispenseOnDemandFragment)
+            if (pillViewModel.currentUser?.uid == pillViewModel.mainUser.uid) {
+                findNavController().navigate(R.id.action_dashboardFragment_to_dispenseOnDemandFragment)
+            } else {
+                Toast.makeText(
+                    context,
+                    "You are not registered as main device user",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
+
 
     }
 
@@ -116,39 +128,40 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             pillViewModel.pills.observe(viewLifecycleOwner) { pill ->
 
                 pill.forEach {
+                    if (!it.time.isNullOrEmpty()) {
+                        var time = it.time.split(":")
+                        var hours = time[0].toInt()
+                        var minutes = time[1].toInt()
 
-                    var time = it.time.split(":")
-                    var hours = time[0].toInt()
-                    var minutes = time[1].toInt()
+
+                        alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                            intent.putExtra("message", it.name)
+                            PendingIntent.getBroadcast(
+                                context,
+                                it.requestKey,
+                                intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                            )
+                        }
+
+                        val cal: Calendar = Calendar.getInstance().apply {
+                            timeInMillis = System.currentTimeMillis()
+                            set(Calendar.HOUR_OF_DAY, hours)
+                            set(Calendar.MINUTE, minutes)
+                            set(Calendar.SECOND, 0)
+                        }
 
 
-                    alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                    alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
-                        intent.putExtra("message", it.name)
-                        PendingIntent.getBroadcast(
-                            context,
-                            it.requestKey,
-                            intent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
+
+                        alarmMgr?.setRepeating(
+                            AlarmManager.RTC_WAKEUP,
+                            cal.timeInMillis,
+                            3600000 * it.repeadtly.toString().toLong(),
+                            alarmIntent
                         )
+
                     }
-
-                    val cal: Calendar = Calendar.getInstance().apply {
-                        timeInMillis = System.currentTimeMillis()
-                        set(Calendar.HOUR_OF_DAY, hours)
-                        set(Calendar.MINUTE, minutes)
-                        set(Calendar.SECOND, 0)
-                    }
-
-
-
-                    alarmMgr?.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        cal.timeInMillis,
-                        3600000 * it.repeadtly.toString().toLong(),
-                        alarmIntent
-                    )
-
                 }
             }
             pillViewModel.loggedInFlag = true

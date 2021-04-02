@@ -1,5 +1,7 @@
 package com.cmps312.seniorproject
 
+import android.R.attr.fragment
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -11,30 +13,37 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var auth : FirebaseAuth
-    lateinit var googleSignInClient : GoogleSignInClient
-    lateinit var googleSignInOption : GoogleSignInOptions
+    lateinit var auth: FirebaseAuth
+    lateinit var googleSignInClient: GoogleSignInClient
+    lateinit var googleSignInOption: GoogleSignInOptions
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         navController = findNavController(R.id.fragment)
     }
 
-    private fun google(){
+    private fun google() {
         // Configure Google Sign In
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-        googleSignInClient = GoogleSignIn.getClient(this,gso)
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
         auth = FirebaseAuth.getInstance()
     }
 
+var count = 0
 
+    /*
+    override fun onBackPressed() {
+        count++
+        if(count==2) {
+            super.onBackPressed()
+            count=0
+        }
+    }*/
 
 }
 
