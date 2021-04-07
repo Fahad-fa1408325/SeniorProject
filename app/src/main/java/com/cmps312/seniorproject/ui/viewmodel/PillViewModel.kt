@@ -32,8 +32,8 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
     private var _tempGuestUsers = MutableLiveData<List<GuestUser>>()
     var tempGuestUsers: LiveData<List<GuestUser>> = _tempGuestUsers
 
-    private var _tempMainUsers = MutableLiveData<List<MainUser>>()
-    var tempMainUsers: LiveData<List<MainUser>> = _tempMainUsers
+    private var _mainUsers = MutableLiveData<List<MainUser>>()
+    var mainUsers: LiveData<List<MainUser>> = _mainUsers
 
     var currentUser: FirebaseUser = FirebaseUser()
     var mainUser: MainUser = MainUser()
@@ -70,6 +70,7 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
                 _guestUsers.value = PillRepo.getGuestUsers(uid)
+                _tempGuestUsers.value = PillRepo.getAllGuestUsers()
             }
         }
     }
@@ -90,19 +91,20 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getAllGuestUsers() {
-        _tempGuestUsers.value = listOf<GuestUser>()  //clear the list
+        _guestUsers.value = listOf<GuestUser>()  //clear the list
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
+                _guestUsers.value = PillRepo.getAllGuestUsers()
                 _tempGuestUsers.value = PillRepo.getAllGuestUsers()
             }
         }
     }
 
     fun getAllMainUsers() {
-        _tempGuestUsers.value = listOf<GuestUser>()  //clear the list
+        _mainUsers.value = listOf<MainUser>()  //clear the list
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _tempMainUsers.value = PillRepo.getAllMainUsers()
+                _mainUsers.value = PillRepo.getAllMainUsers()
             }
         }
     }
@@ -139,25 +141,20 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
     fun registerPillsListener() {
 
-        getAllGuestUsers()
-
         Log.d("checkMainUser", "${mainUser.email} Hello")
 
-        var pillListener = PillRepo.pillsDocumentRef.addSnapshotListener { snapshot, error ->
+        PillRepo.pillsDocumentRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
 
             val pills = mutableListOf<Pill>()
-            var guestUsers = tempGuestUsers.value
-            var mainUsers = tempMainUsers.value
-
-            var tempUsers = mutableListOf<GuestUser>()
-            var connectedFlag = true
 
             Log.d("checkMainUser", "${mainUser.email}")
 
-            guestUsers?.forEach {
+            var users = mutableListOf<GuestUser>()
+
+            tempGuestUsers.value?.forEach {
                 if (it.email == currentUser?.email) {
-                    tempUsers.add(it)
+                    users.add(it)
                 }
             }
 
@@ -171,11 +168,15 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
 
-            tempUsers.forEach { user ->
+            Log.d("pillListener", "say hai from pill Listener")
+
+            users?.forEach { user ->
+                Log.d("pillListener", "${user.email}")
                 snapshot?.forEach {
                     val pill = it.toObject(Pill::class.java)
                     pill.pillId = it.id
                     if (pill.uid == user.uid) {
+                        Log.d("pillListener", "new guest user ${user.email} pill ${pill.name}")
                         pill.mainUserFlag = false
                         pill.mainUserEmail = user.mainUserEmail
                         pills.add(pill)
@@ -183,8 +184,9 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
 
-            mainUsers?.forEach { user ->
+            mainUsers.value?.forEach { user ->
                 if (user.email == currentUser?.email) {
+                    Log.d("pillListener", "adding edit main device with email ${user.email}")
                     snapshot?.forEach {
                         val pill = it.toObject(Pill::class.java)
                         if (pill.mainUserEmail == "Main Device") {
@@ -197,8 +199,10 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
             }
-            mainUsers?.forEach { main ->
-                tempUsers.forEach { user ->
+
+            mainUsers.value?.forEach { main ->
+                Log.d("pillListener", "adding edit main device with email ${main.email}")
+                users?.forEach { user ->
                     if (user.mainUserEmail == main.email) {
                         snapshot?.forEach {
                             val pill = it.toObject(Pill::class.java)
@@ -213,20 +217,8 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
                     }
                 }
-
-                pills.forEach {
-                    Log.d(
-                        "currentPill",
-                        "name :${it.name} + read :${it.readFromMain} + edit :${it.editFromMain} + main : ${it.mainUserFlag}"
-                    )
-                }
-
-                Log.d("currentPill", "Finished")
-                Log.d("currentPill", "main user :${mainUser.email}")
-                Log.d("currentPill", "connected :$connectedFlag")
-
-                _pills.value = pills
             }
+            _pills.value = pills
         }
     }
 
@@ -237,21 +229,32 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
             if (error != null) return@addSnapshotListener
 
             val users = mutableListOf<GuestUser>()
+            val tempUsers = mutableListOf<GuestUser>()
+
             snapshot?.forEach {
+
                 val user = it.toObject(GuestUser::class.java)
                 user.id = it.id
-                if (user.uid == currentUser?.uid)
+
+                if (user.uid == currentUser?.uid) {
+                    Log.d("guestListener", " guest can be deleted ${user.email}")
                     users.add(user)
+                }
+
+                tempUsers.add(user)
+
             }
+            _tempGuestUsers.value = tempUsers
             _guestUsers.value = users
         }
-
     }
 
     private fun registerMainUsersListener() {
 
         PillRepo.mainUserDocumentRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
+
+            var users = mutableListOf<MainUser>()
 
             /*
             var pill = Pill()
@@ -280,7 +283,11 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
                 }
 
+                users.add(tempMainUser)
+
             }
+
+            _mainUsers.value = users
 
         }
 

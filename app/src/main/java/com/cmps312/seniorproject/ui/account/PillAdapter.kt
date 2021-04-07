@@ -28,57 +28,45 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
         fun bind(pill: Pill) {
 
             binding.pill = pill
-
+            Log.d("pillAdapter", "${pill.name} + ${pill.mainUserEmail}")
 
             if (pill.mainUserFlag) {
 
+                binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
                 binding.editBTN.setOnClickListener { editPillListener(pill) }
                 binding.deleteBTN.setOnClickListener { deletePillListener(pill) }
                 binding.editBTN.visibility = View.VISIBLE
                 binding.deleteBTN.visibility = View.VISIBLE
-                binding.belongsToET.visibility = View.INVISIBLE
-
-                Log.d(
-                    "adapter",
-                    "name :${pill.name} main flag"
-                )
                 binding.pillImageView.setImageResource(R.drawable.ic_medicine)
+
             } else if (pill.editFromMain) {
+
+                binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
                 binding.editBTN.setOnClickListener { editPillListener(pill) }
                 binding.deleteBTN.visibility = View.INVISIBLE
                 val string = "${pill.uid} on ${pill.mainUserEmail}"
                 binding.mainUserET.text = string.toString()
-                binding.belongsToET.visibility = View.VISIBLE
-                Log.d(
-                    "adapter",
-                    "name :${pill.name} edit flag"
-                )
                 binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
                 binding.editBTN.setBackgroundColor(Color.RED)
 
             } else if (pill.readFromMain) {
+
+                binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
                 val string = "${pill.uid} on ${pill.mainUserEmail}"
                 binding.mainUserET.text = string.toString()
                 binding.belongsToET.visibility = View.VISIBLE
                 binding.editBTN.visibility = View.INVISIBLE
                 binding.deleteBTN.visibility = View.INVISIBLE
-                Log.d(
-                    "adapter",
-                    "name :${pill.name} + read flag"
-                )
                 binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
+
             } else {
 
+                binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
                 binding.mainUserET.text = pill.mainUserEmail
-                binding.belongsToET.visibility = View.VISIBLE
                 binding.editBTN.visibility = View.INVISIBLE
                 binding.deleteBTN.visibility = View.INVISIBLE
-
-                Log.d(
-                    "adapter",
-                    "name :${pill.name} passes through else"
-                )
                 binding.pillImageView.setImageResource(R.drawable.ic_medicine2)
+
             }
 
         }

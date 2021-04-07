@@ -117,6 +117,14 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
     }
 
+    private fun getPreviousGuestUsers() {
+
+        if (!pillViewModel.loggedInFlag) {
+            pillViewModel.getGuestUsers(pillViewModel.currentUser?.uid)
+        }
+
+    }
+
     private fun getPreviousAlarms() {
 
         if (!pillViewModel.loggedInFlag) {
@@ -166,14 +174,6 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             }
             pillViewModel.loggedInFlag = true
         }
-    }
-
-    private fun getPreviousGuestUsers() {
-
-        if (!pillViewModel.loggedInFlag) {
-            pillViewModel.getGuestUsers(pillViewModel.currentUser.uid)
-        }
-
     }
 
     /*private fun getMainUserPills() {

@@ -23,24 +23,31 @@ class NewGuestUserFragment : Fragment(R.layout.fragment_new_guest_user) {
         addUserBTN.setOnClickListener {
 
             //Here the implementation of adding guest user to the list
-            if (gusetUserEmailET.text.toString() != pillViewModel.currentUser.email) {
-                var user = GuestUser()
+            if (!gusetUserEmailET.text.toString().isNullOrEmpty()) {
+                if (gusetUserEmailET.text.toString() != pillViewModel.currentUser.email) {
+                    var user = GuestUser()
 
-                user.email = gusetUserEmailET.text.toString()
-                user.uid = pillViewModel.currentUser.uid
-                user.mainUserEmail = pillViewModel.currentUser.email
+                    user.email = gusetUserEmailET.text.toString()
+                    user.uid = pillViewModel.currentUser.uid
+                    user.mainUserEmail = pillViewModel.currentUser.email
 
-                pillViewModel.addGuestUser(user)
+                    pillViewModel.addGuestUser(user)
 
-                activity?.onBackPressed()
-            } else {
+                    activity?.onBackPressed()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Can't use the current email as guest email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }else{
                 Toast.makeText(
                     context,
-                    "Can't use the current email as guest email",
+                    "Guest User Email Field is Required***",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
         }
 
         cancelBTN.setOnClickListener {
