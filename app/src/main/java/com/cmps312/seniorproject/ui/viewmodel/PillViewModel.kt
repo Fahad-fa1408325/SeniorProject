@@ -1,11 +1,16 @@
 package com.cmps312.seniorproject.ui.viewmodel
 
+import android.app.AlarmManager
 import android.app.Application
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.cmps312.seniorproject.model.alarm.AlarmReceiver
 import com.cmps312.seniorproject.model.entity.FirebaseUser
 import com.cmps312.seniorproject.model.entity.GuestUser
 import com.cmps312.seniorproject.model.entity.MainUser
@@ -15,10 +20,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class PillViewModel(application: Application) : AndroidViewModel(application) {
 
     private val TAG = "PillViewModel"
+
+    private val context = getApplication<Application>().applicationContext
+
+    private var alarmMgr: AlarmManager? = null
+    private lateinit var alarmIntent: PendingIntent
 
     private var _pills = MutableLiveData<List<Pill>>()
     var pills: LiveData<List<Pill>> = _pills
@@ -139,86 +150,20 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun registerPillsListener() {
+    private fun registerPillsListener() {
 
         Log.d("checkMainUser", "${mainUser.email} Hello")
 
         PillRepo.pillsDocumentRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
 
-            val pills = mutableListOf<Pill>()
-
-            Log.d("checkMainUser", "${mainUser.email}")
-
-            var users = mutableListOf<GuestUser>()
-
-            tempGuestUsers.value?.forEach {
-                if (it.email == currentUser?.email) {
-                    users.add(it)
+            _pills.value = listOf<Pill>() //clear the list
+            viewModelScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Main) {
+                    _pills.value = updatingPillList()
                 }
             }
 
-            snapshot?.forEach {
-                val pill = it.toObject(Pill::class.java)
-                pill.pillId = it.id
-                if (pill.uid == currentUser?.uid) {
-                    pill.mainUserFlag = true
-                    pill.mainUserEmail = ""
-                    pills.add(pill)
-                }
-            }
-
-            Log.d("pillListener", "say hai from pill Listener")
-
-            users?.forEach { user ->
-                Log.d("pillListener", "${user.email}")
-                snapshot?.forEach {
-                    val pill = it.toObject(Pill::class.java)
-                    pill.pillId = it.id
-                    if (pill.uid == user.uid) {
-                        Log.d("pillListener", "new guest user ${user.email} pill ${pill.name}")
-                        pill.mainUserFlag = false
-                        pill.mainUserEmail = user.mainUserEmail
-                        pills.add(pill)
-                    }
-                }
-            }
-
-            mainUsers.value?.forEach { user ->
-                if (user.email == currentUser?.email) {
-                    Log.d("pillListener", "adding edit main device with email ${user.email}")
-                    snapshot?.forEach {
-                        val pill = it.toObject(Pill::class.java)
-                        if (pill.mainUserEmail == "Main Device") {
-                            pill.mainUserFlag = false
-                            pill.readFromMain = false
-                            pill.editFromMain = true
-                            pill.pillId = it.id
-                            pills.add(pill)
-                        }
-                    }
-                }
-            }
-
-            mainUsers.value?.forEach { main ->
-                Log.d("pillListener", "adding edit main device with email ${main.email}")
-                users?.forEach { user ->
-                    if (user.mainUserEmail == main.email) {
-                        snapshot?.forEach {
-                            val pill = it.toObject(Pill::class.java)
-                            if (pill.mainUserEmail == "Main Device") {
-                                pill.mainUserFlag = false
-                                pill.readFromMain = true
-                                pill.editFromMain = false
-                                pill.pillId = it.id
-                                pills.add(pill)
-                            }
-                        }
-
-                    }
-                }
-            }
-            _pills.value = pills
         }
     }
 
@@ -246,6 +191,14 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
             }
             _tempGuestUsers.value = tempUsers
             _guestUsers.value = users
+
+            _pills.value = listOf<Pill>() //clear the list
+            viewModelScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Main) {
+                    _pills.value = updatingPillList()
+                }
+            }
+
         }
     }
 
@@ -256,40 +209,144 @@ class PillViewModel(application: Application) : AndroidViewModel(application) {
 
             var users = mutableListOf<MainUser>()
 
-            /*
-            var pill = Pill()
-            pill.name = "Panadrex"
-            pill.time = "13:16"
-            pill.dosage = 1
-            pill.repeadtly = 1
-            pill.pillId = "TVMYawrF9j9MAKtWUfIP"
-            pill.uid = "o45WOPsSsuhqSBTNWyxlIAXUx4M8"
-            pill.mainUserFlag = true
-            pill.mainUserEmail = ""
-            pill.requestKey = 70416
-            pill.readFromMain = false
-            pill.editFromMain = false
-            pill.percentage = 0.0
-            pill.demanded = 0
-            */
-
             snapshot?.forEach {
 
                 var tempMainUser = it.toObject(MainUser::class.java)
 
                 if (tempMainUser.uid == currentUser?.uid) {
-
                     mainUser = tempMainUser
-
                 }
-
                 users.add(tempMainUser)
-
             }
 
             _mainUsers.value = users
 
+            _pills.value = listOf<Pill>() //clear the list
+            viewModelScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Main) {
+                    _pills.value = updatingPillList()
+                }
+            }
+
         }
+
+    }
+
+    private suspend fun updatingPillList(): List<Pill> {
+
+        val snapshot = PillRepo.pillsDocumentRef
+            .get().await()
+
+        val pills = mutableListOf<Pill>()
+
+        Log.d("checkMainUser", "${mainUser.email}")
+
+        var users = mutableListOf<GuestUser>()
+
+        tempGuestUsers.value?.forEach {
+            if (it.email == currentUser?.email) {
+                users.add(it)
+            }
+        }
+
+        snapshot?.forEach {
+            val pill = it.toObject(Pill::class.java)
+            pill.pillId = it.id
+            if (pill.uid == currentUser?.uid) {
+                pill.mainUserFlag = true
+                pill.mainUserEmail = ""
+                pills.add(pill)
+            }
+        }
+
+        Log.d("pillListener", "say hai from pill Listener")
+
+        users?.forEach { user ->
+            Log.d("pillListener", "${user.email}")
+            snapshot?.forEach {
+                val pill = it.toObject(Pill::class.java)
+                pill.pillId = it.id
+                if (pill.uid == user.uid) {
+                    Log.d("pillListener", "new guest user ${user.email} pill ${pill.name}")
+                    pill.mainUserFlag = false
+                    pill.mainUserEmail = user.mainUserEmail
+                    pills.add(pill)
+                }
+            }
+        }
+
+        mainUsers.value?.forEach { user ->
+            if (user.email == currentUser?.email) {
+                Log.d("pillListener", "adding edit main device with email ${user.email}")
+                snapshot?.forEach {
+                    val pill = it.toObject(Pill::class.java)
+                    if (pill.mainUserEmail == "Main Device") {
+                        pill.mainUserFlag = false
+                        pill.readFromMain = false
+                        pill.editFromMain = true
+                        pill.pillId = it.id
+                        pills.add(pill)
+                    }
+                }
+            }
+        }
+
+        mainUsers.value?.forEach { main ->
+            Log.d("pillListener", "adding edit main device with email ${main.email}")
+            users?.forEach { user ->
+                if (user.mainUserEmail == main.email) {
+                    snapshot?.forEach {
+                        val pill = it.toObject(Pill::class.java)
+                        if (pill.mainUserEmail == "Main Device") {
+                            pill.mainUserFlag = false
+                            pill.readFromMain = true
+                            pill.editFromMain = false
+                            pill.pillId = it.id
+                            pills.add(pill)
+                        }
+                    }
+
+                }
+            }
+        }
+
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
+
+        pills.forEach {
+            if (it.percentage <= 25) {
+
+                var refillMessage = "${it.name} need to be Refilled"
+
+                alarmMgr =
+                    context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                    intent.putExtra("message", refillMessage)
+                    PendingIntent.getBroadcast(
+                        context,
+                        (1..100000).random(),
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
+
+                val cal: Calendar = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.HOUR_OF_DAY, currentHour)
+                    set(Calendar.MINUTE, currentMinute)
+                    set(Calendar.SECOND, 0)
+                }
+
+                alarmMgr?.set(
+                    AlarmManager.RTC_WAKEUP, cal.timeInMillis,
+                    alarmIntent
+                )
+
+            }
+        }
+
+
+        return pills
 
     }
 

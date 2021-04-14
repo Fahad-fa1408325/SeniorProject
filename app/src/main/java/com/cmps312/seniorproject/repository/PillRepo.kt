@@ -1,7 +1,6 @@
 package com.cmps312.seniorproject.repository
 
 import android.util.Log
-import com.cmps312.seniorproject.LoginFragment
 import com.cmps312.seniorproject.model.entity.FirebaseUser
 import com.cmps312.seniorproject.model.entity.GuestUser
 import com.cmps312.seniorproject.model.entity.MainUser
@@ -14,12 +13,11 @@ object PillRepo {
 
     val TAG = "PillListRepo"
     val db by lazy { FirebaseFirestore.getInstance() }
-    val mainDeviceDocumentRef by lazy { db.collection("maindevice") }
     val mainUserDocumentRef by lazy { db.collection("main_users") }
     val guestUserDocumentRef by lazy { db.collection("guest_users") }
     val pillsDocumentRef by lazy { db.collection("pills") }
 
-    //all the magic of caching
+    //caching
     init {
         db.firestoreSettings = firestoreSettings { isPersistenceEnabled = true }
     }
@@ -201,9 +199,6 @@ object PillRepo {
     suspend fun addPill(pill: Pill) = pillsDocumentRef.add(pill)
         .addOnSuccessListener { Log.d(TAG, "Successfully added new pill") }
         .addOnFailureListener { Log.d(TAG, "Was not able to add the new pill") }
-
-    suspend fun getPill(id: String) =
-        pillsDocumentRef.document(id).get().await().toObject(Pill::class.java)
 
     suspend fun deletePill(pill: Pill) = pill.pillId?.let { pillsDocumentRef.document(it).delete() }
 

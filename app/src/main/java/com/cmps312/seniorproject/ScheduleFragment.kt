@@ -82,7 +82,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
 
 
-         pillViewModel.pills.value?.let {
+        pillViewModel.pills.value?.let {
             pillViewModel.deletePill(pill)
             alarmMgr?.cancel(this.alarmIntent)
 

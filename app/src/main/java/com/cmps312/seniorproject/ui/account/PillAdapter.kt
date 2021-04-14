@@ -30,6 +30,51 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
             binding.pill = pill
             Log.d("pillAdapter", "${pill.name} + ${pill.mainUserEmail}")
 
+            when {
+                pill.mainUserFlag -> {
+
+                    binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
+                    binding.editBTN.setOnClickListener { editPillListener(pill) }
+                    binding.deleteBTN.setOnClickListener { deletePillListener(pill) }
+                    binding.editBTN.visibility = View.VISIBLE
+                    binding.deleteBTN.visibility = View.VISIBLE
+                    binding.pillImageView.setImageResource(R.drawable.ic_medicine)
+
+                }
+                pill.editFromMain -> {
+
+                    binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
+                    binding.editBTN.setOnClickListener { editPillListener(pill) }
+                    binding.deleteBTN.visibility = View.INVISIBLE
+                    val string = "${pill.uid} on ${pill.mainUserEmail}"
+                    binding.mainUserET.text = string.toString()
+                    binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
+                    binding.editBTN.setBackgroundColor(Color.RED)
+
+                }
+                pill.readFromMain -> {
+
+                    binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
+                    val string = "${pill.uid} on ${pill.mainUserEmail}"
+                    binding.mainUserET.text = string.toString()
+                    binding.belongsToET.visibility = View.VISIBLE
+                    binding.editBTN.visibility = View.INVISIBLE
+                    binding.deleteBTN.visibility = View.INVISIBLE
+                    binding.pillImageView.setImageResource(R.drawable.ic_medicine3)
+
+                }
+                else -> {
+
+                    binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
+                    binding.mainUserET.text = pill.mainUserEmail
+                    binding.editBTN.visibility = View.INVISIBLE
+                    binding.deleteBTN.visibility = View.INVISIBLE
+                    binding.pillImageView.setImageResource(R.drawable.ic_medicine2)
+
+                }
+            }
+
+            /*
             if (pill.mainUserFlag) {
 
                 binding.itemRepatidlyTV.text = "Every ${pill.repeadtly} Hour(s)"
@@ -68,6 +113,8 @@ class PillAdapter(val editPillListener: (Pill) -> Unit, val deletePillListener: 
                 binding.pillImageView.setImageResource(R.drawable.ic_medicine2)
 
             }
+             */
+
 
         }
     }

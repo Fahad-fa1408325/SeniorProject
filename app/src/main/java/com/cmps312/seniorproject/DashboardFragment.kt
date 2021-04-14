@@ -46,6 +46,8 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             //findNavController().navigate(R.id.action_dashboardFragment_to_NFCFragment)
             val intent = Intent(context, NFCFragment::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("email", pillViewModel.currentUser?.email)
+            intent.putExtra("uid", pillViewModel.currentUser?.uid)
             context?.startActivity(intent)
         }
 
@@ -72,8 +74,6 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 ).show()
             }
         }
-
-
     }
 
     private fun removePreviousAlarms() {
@@ -132,6 +132,8 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             pillViewModel.getMainUser(pillViewModel.currentUser.uid)
             pillViewModel.getPills(pillViewModel.currentUser.uid, pillViewModel.currentUser.email)
 
+            val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+            val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
 
             pillViewModel.pills.observe(viewLifecycleOwner) { pill ->
 
@@ -168,6 +170,36 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                             3600000 * it.repeadtly.toString().toLong(),
                             alarmIntent
                         )
+
+                        if (it.percentage <= 25) {
+
+                            var refillMessage = "${it.name} need to be Refilled"
+
+                            alarmMgr =
+                                context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                                intent.putExtra("message", refillMessage)
+                                PendingIntent.getBroadcast(
+                                    context,
+                                    (1..100000).random(),
+                                    intent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                                )
+                            }
+
+                            val cal: Calendar = Calendar.getInstance().apply {
+                                timeInMillis = System.currentTimeMillis()
+                                set(Calendar.HOUR_OF_DAY, currentHour)
+                                set(Calendar.MINUTE, currentMinute)
+                                set(Calendar.SECOND, 0)
+                            }
+
+                            alarmMgr?.set(
+                                AlarmManager.RTC_WAKEUP, cal.timeInMillis,
+                                alarmIntent
+                            )
+
+                        }
 
                     }
                 }

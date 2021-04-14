@@ -103,7 +103,6 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
                         )
                     }
 
-                    Toast.makeText(context, "$hours + $minutes", Toast.LENGTH_SHORT).show()
                     val cal: Calendar = Calendar.getInstance().apply {
                         timeInMillis = System.currentTimeMillis()
                         set(Calendar.HOUR_OF_DAY, hours)
@@ -153,7 +152,6 @@ class AddScheduleFragment : Fragment(R.layout.fragment_add_schedule) {
                         )
                     }
 
-                    Toast.makeText(context, "$hours + $minutes", Toast.LENGTH_SHORT).show()
                     val cal: Calendar = Calendar.getInstance().apply {
                         timeInMillis = System.currentTimeMillis()
                         set(Calendar.HOUR_OF_DAY, hours)

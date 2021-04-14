@@ -17,7 +17,7 @@ data class Pill(
     var requestKey: Int = 0,
     var readFromMain: Boolean = false,
     var editFromMain: Boolean = false,
-    var percentage: Double = 0.0,
+    var percentage: Double = 100.0,
     var demanded: Int = 0
 
 ) : Parcelable
